@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lagos State Student Score Sheet & Performance Calculator</title>
+  <meta name="description" content="Lagos State Standard Pupil Continuous Assessment & Termly Score Sheet Calculator with Alpine.js" />
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <!-- Alpine.js -->
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.8/dist/cdn.min.js"></script>
+
+  <link rel="stylesheet" href="style.css">
+
+</head>
+<body x-data="reportSheetApp()" :class="{ 'sidebar-collapsed': !sidebarOpen }">
+
+  <div class="app-layout">
+    <!-- LEFT SIDEBAR: ALL MENUS, CONTROLS, ACTIONS & METRICS -->
+    <aside class="app-sidebar no-print">
+      <div class="sidebar-header">
+        <div class="sidebar-brand">
+          <span class="brand-icon">🏛️</span>
+          <div>
+            <h2 class="brand-title">Lagos Broadsheet</h2>
+            <p class="brand-sub">Controls & Operations</p>
+          </div>
+        </div>
+        <button class="sidebar-toggle-btn" @click="sidebarOpen = !sidebarOpen" :title="sidebarOpen ? 'Collapse Sidebar' : 'Expand Sidebar'">
+          <span x-text="sidebarOpen ? '◀' : '▶'"></span>
+        </button>
+      </div>
+
+      <div class="sidebar-content">
+        <!-- Quick Search -->
+        <div class="sidebar-section">
+          <label class="sidebar-section-title">🔍 Search Pupil</label>
+          <div class="sidebar-search">
+            <input type="text" x-model="searchQuery" placeholder="Search by name or Adm. No..." />
+          </div>
+        </div>
+
+        <!-- Primary Action Buttons -->
+        <div class="sidebar-section">
+          <label class="sidebar-section-title">⚡ Quick Actions</label>
+          <div class="sidebar-actions-grid">
+            <button class="side-btn btn-print" @click="window.print()">
+              <span>🖨️</span> Print Master Sheet
+            </button>
+            <button class="side-btn btn-upload" @click="showBulkModal = true">
+              <span>📤</span> Bulk Upload
+            </button>
+            <button class="side-btn btn-sort" @click="sortByPosition()">
+              <span>🏆</span> Sort by Position
+            </button>
+            <button class="side-btn btn-primary" @click="addPupil()">
+              <span>➕</span> Add New Pupil
+            </button>
+          </div>
+        </div>
+
+        <!-- Sheet Settings & Controls -->
+        <div class="sidebar-section">
+          <label class="sidebar-section-title">⚙️ Sheet Settings</label>
+          <div class="sidebar-field-group">
+            <label>Rank Pupils By:</label>
+            <select x-model="rankingBasis" class="side-select">
+              <option value="grandTotal">GRAND TOTAL (Current + B/F)</option>
+              <option value="total">TERM TOTAL</option>
+              <option value="average">AVERAGE %</option>
+            </select>
+          </div>
+
+          <div class="sidebar-field-group">
+            <label>Table Headers Layout:</label>
+            <button class="side-btn btn-toggle" @click="verticalHeaders = !verticalHeaders">
+              <span x-text="verticalHeaders ? '📐 Headers: Vertical' : '📏 Headers: Horizontal'"></span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Data Import / Export -->
+        <div class="sidebar-section">
+          <label class="sidebar-section-title">💾 Data Operations</label>
+          <div class="sidebar-data-actions">
+            <button class="side-btn btn-outline" @click="downloadTemplate()">
+              <span>📄</span> CSV Template
+            </button>
+            <button class="side-btn btn-outline" @click="exportCSV()">
+              <span>📥</span> Export CSV
+            </button>
+            <button class="side-btn btn-outline" @click="loadSampleData()">
+              <span>🔄</span> Reset Sample Data
+            </button>
+            <button class="side-btn btn-danger" @click="clearAllPupils()" x-show="pupils.length > 0">
+              <span>🗑️</span> Clear All Records
+            </button>
+          </div>
+        </div>
+
+        <!-- Real-time Live Metrics -->
+        <div class="sidebar-section">
+          <label class="sidebar-section-title">📊 Class Summary</label>
+          <div class="sidebar-metrics-list">
+            <div class="metric-item">
+              <span class="metric-name">Total Enrolled</span>
+              <span class="metric-val" x-text="pupils.length">0</span>
+            </div>
+            <div class="metric-item">
+              <span class="metric-name">Class Average</span>
+              <span class="metric-val text-primary" x-text="classAverage + '%'">0%</span>
+            </div>
+            <div class="metric-item">
+              <span class="metric-name">Highest Grand Total</span>
+              <span class="metric-val text-success" x-text="highestScoreVal">0</span>
+            </div>
+            <div class="metric-item">
+              <span class="metric-name">Lowest Grand Total</span>
+              <span class="metric-val text-warning" x-text="lowestScoreVal">0</span>
+            </div>
+            <div class="metric-item">
+              <span class="metric-name">Pass Rate (≥50%)</span>
+              <span class="metric-val text-accent" x-text="passRate + '%'">0%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- FLOATING TOGGLE FOR COLLAPSED SIDEBAR -->
+    <button class="floating-sidebar-btn no-print" x-show="!sidebarOpen" @click="sidebarOpen = true" title="Show Sidebar Menu">
+      <span>☰ Menu</span>
+    </button>
+
+    <!-- RIGHT MAIN CONTENT: THE PURE LAGOS STATE BROADSHEET (READY FOR FULL-PAGE PRINT) -->
+    <main class="main-sheet-workspace">
+      <div class="container printable-document">
+
+        <!-- Lagos State Universal Basic Education Board Full-Width Master Header -->
+        <header class="official-master-header full-banner">
+          <!-- Outer rounded box with top titles, right logo, and administrative lines -->
+          <div class="header-right-main-box">
+            <!-- TOP SECTION: Official Lagos State Logo on Left & Titles to the Right -->
+            <div class="header-top-title-row">
+              <!-- Official Lagos State Logo / Coat of Arms in Circle on the Left -->
+              <div class="header-crest-wrapper" title="Official Lagos State Coat of Arms">
+                <img src="lagos-state-logo.png" alt="Official Lagos State Coat of Arms" class="official-crest-img" />
+              </div>
+
+              <div class="header-board-titles">
+                <h1 class="board-title-heading">LAGOS STATE UNIVERSAL BASIC EDUCATION BOARD</h1>
+                <div class="master-sheet-pill-box">
+                  <div class="master-sheet-pill-inner">
+                    <span class="master-sheet-title">UNIFIED EXAMINATION MASTER SHEET</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- BOTTOM SECTION: Institutional Form Lines (Exact User Format) -->
+            <div class="header-box-bottom-lines">
+              <!-- Row 1: Left-aligned input ending with TERM -->
+              <div class="inline-meta-row row-term-only">
+                <div class="form-item term-item term-left">
+                  <input type="text" x-model="schoolInfo.term" class="line-input term-input" placeholder="e.g. 1ST" />
+                  <span class="form-label">TERM</span>
+                </div>
+              </div>
+
+              <!-- Row 2: LGEA on left, SESSION on right -->
+              <div class="inline-meta-row row-lgea-session">
+                <div class="form-item lgea-item">
+                  <span class="form-label">LGEA:</span>
+                  <input type="text" x-model="schoolInfo.lgea" class="line-input" />
+                </div>
+                <div class="form-item session-item session-right">
+                  <input type="text" x-model="schoolInfo.session" class="line-input session-input" placeholder="e.g. 2023/2024" />
+                  <span class="form-label">SESSION</span>
+                </div>
+              </div>
+
+              <!-- Row 3: NAME OF SCHOOL on left, CLASS on right -->
+              <div class="inline-meta-row row-school-class">
+                <div class="form-item school-name-item">
+                  <span class="form-label">NAME OF SCHOOL:</span>
+                  <input type="text" x-model="schoolInfo.name" class="line-input" />
+                </div>
+                <div class="form-item class-item">
+                  <span class="form-label">CLASS:</span>
+                  <input type="text" x-model="schoolInfo.classArm" class="line-input" />
+                </div>
+              </div>
+            </div>
+          </div>
+        </header>
+    <div class="modal-overlay" x-show="showBulkModal" x-cloak @click.self="showBulkModal = false">
+      <div class="modal-card">
+        <div class="modal-header">
+          <h2><span>📊</span> Bulk Upload Student Scores</h2>
+          <button class="modal-close" @click="showBulkModal = false">&times;</button>
+        </div>
+
+        <div class="modal-body">
+          <div class="modal-tabs">
+            <button class="modal-tab" :class="{ 'active': bulkMode === 'file' }" @click="bulkMode = 'file'">File Upload (CSV / TXT)</button>
+            <button class="modal-tab" :class="{ 'active': bulkMode === 'paste' }" @click="bulkMode = 'paste'">Paste Data (Excel / Sheets / CSV)</button>
+          </div>
+
+          <!-- File Upload Tab -->
+          <div x-show="bulkMode === 'file'" style="display: flex; flex-direction: column; gap: 1rem;">
+            <div class="dropzone" @click="$refs.fileInput.click()">
+              <input type="file" x-ref="fileInput" accept=".csv, .txt, .tsv" style="display: none;" @change="handleFileUpload($event)">
+              <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">📁</div>
+              <div style="font-weight: 700; color: #1e293b;">Click to select or drag & drop CSV file</div>
+              <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.25rem;">
+                Compatible with Lagos State broad sheet columns or standard Excel export
+              </div>
+            </div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; background: #f1f5f9; padding: 0.75rem 1rem; border-radius: 6px; font-size: 0.8rem;">
+              <span>Need the exact columns format?</span>
+              <button class="btn btn-secondary" style="padding: 0.25rem 0.6rem;" @click="downloadTemplate()">Download CSV Template</button>
+            </div>
+          </div>
+
+          <!-- Paste Tab -->
+          <div x-show="bulkMode === 'paste'" style="display: flex; flex-direction: column; gap: 0.5rem;">
+            <p style="font-size: 0.8rem; color: var(--text-muted);">
+              Copy and paste rows directly from <strong>Excel</strong>, <strong>Google Sheets</strong>, or a <strong>CSV</strong>. Header row is auto-detected.
+            </p>
+            <textarea class="paste-area" x-model="bulkText" placeholder="Paste tab-separated or comma-separated rows here...&#10;e.g.&#10;Name, AdmNo, Status, Maths, English, Quantitative, VReasoning, BST, Yoruba, CRSIrs, CCADrawing, HistoryCivic, PVS, NVE, BF"></textarea>
+          </div>
+
+          <!-- Upload Options -->
+          <div style="display: flex; flex-wrap: wrap; gap: 1rem; background: #f8fafc; border: 1px solid var(--border); padding: 0.75rem 1rem; border-radius: 6px; font-size: 0.8rem;">
+            <label style="display: flex; align-items: center; gap: 0.4rem; cursor: pointer;">
+              <input type="radio" value="append" x-model="uploadAction">
+              <span><strong>Append</strong> to current pupils</span>
+            </label>
+            <label style="display: flex; align-items: center; gap: 0.4rem; cursor: pointer;">
+              <input type="radio" value="replace" x-model="uploadAction">
+              <span><strong>Replace / Overwrite</strong> all pupils</span>
+            </label>
+          </div>
+
+          <div x-show="uploadError" style="color: var(--danger); font-size: 0.82rem; font-weight: 600;" x-text="uploadError"></div>
+        </div>
+
+        <div class="modal-footer">
+          <button class="btn btn-secondary" @click="showBulkModal = false">Cancel</button>
+          <button class="btn btn-primary" @click="processBulkUpload()">
+            <span>⚡</span> Process & Compute Scores
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Scores Sheet Table -->
+    <div class="table-responsive" :class="{ 'vertical-mode': verticalHeaders }">
+      <table class="score-table">
+        <thead>
+          <!-- 1st Header Row: S/N, SCHOOL'S CODE NO in 2nd column, and Subject/Summary Titles -->
+          <tr class="header-row-1">
+            <!-- Col 1: S/N -->
+            <th class="col-sn th-horizontal" style="text-align: center;">S/N</th>
+
+            <!-- Col 2: SCHOOL'S CODE NO in first row, 2nd column -->
+            <th class="col-name school-code-col-th" style="text-align: center; padding: 0.2rem 0.3rem;">
+              <div class="code-th-container">
+                <span class="code-th-title">SCHOOL'S CODE NO</span>
+                <input type="text" x-model="schoolInfo.schoolCode" placeholder="LG/..." class="code-th-input" />
+              </div>
+            </th>
+
+            <!-- Vertical Turned Headers (Rotated for Slim Columns) -->
+            <th class="col-adm th-vertical sortable" @click="sortColumn('admNo')" title="Admission Number">
+              <span class="th-content">ADM.NO ⬍</span>
+            </th>
+            <th class="col-status th-vertical">
+              <span class="th-content">STATUS</span>
+            </th>
+            
+            <!-- Subject Headers (11 Subjects) -->
+            <th class="subject-header th-vertical col-fig sortable" @click="sortColumn('maths')" title="Mathematics / Number Work">
+              <span class="th-content">MATHS / NUMBER WORK</span>
+            </th>
+            <th class="subject-header th-vertical col-fig sortable" @click="sortColumn('english')" title="English Language / Letter Work">
+              <span class="th-content">ENGLISH / LETTER WORK</span>
+            </th>
+            <th class="subject-header th-vertical col-fig sortable" @click="sortColumn('quantitative')" title="Quantitative Reasoning">
+              <span class="th-content">QUANTITATIVE</span>
+            </th>
+            <th class="subject-header th-vertical col-fig sortable" @click="sortColumn('vReasoning')" title="Verbal Reasoning / Reading">
+              <span class="th-content">V.REASONING/READING</span>
+            </th>
+            <th class="subject-header th-vertical col-fig sortable" @click="sortColumn('bst')" title="Basic Science and Technology">
+              <span class="th-content">BST</span>
+            </th>
+            <th class="subject-header th-vertical col-fig sortable" @click="sortColumn('yoruba')" title="Yoruba Language">
+              <span class="th-content">YORUBA</span>
+            </th>
+            <th class="subject-header th-vertical col-fig sortable" @click="sortColumn('crsIrs')" title="Christian / Islamic Religious Studies / Health Habit">
+              <span class="th-content">CRS/IRS/HEALTH HABIT</span>
+            </th>
+            <th class="subject-header th-vertical col-fig sortable" @click="sortColumn('ccaDrawing')" title="Cultural & Creative Arts / Drawing">
+              <span class="th-content">CCA/DRAWING</span>
+            </th>
+            <th class="subject-header th-vertical col-fig sortable" @click="sortColumn('historyCivic')" title="History & Civic Education">
+              <span class="th-content">HISTORY/CIVIC EDU.</span>
+            </th>
+            <th class="subject-header th-vertical col-fig sortable" @click="sortColumn('pvs')" title="Pre-Vocational Studies / Physical Development">
+              <span class="th-content">PVS/PHYSICAL DEV.</span>
+            </th>
+            <th class="subject-header th-vertical col-fig sortable" @click="sortColumn('nve')" title="National Values Education / Social Habit">
+              <span class="th-content">NVE/SOCIAL HABIT</span>
+            </th>
+
+            <!-- Calculated Summary Headers with Sorting -->
+            <th class="summary-header th-vertical col-fig sortable" @click="sortColumn('total')" title="Term Total Score">
+              <span class="th-content">TOTAL ⬍</span>
+            </th>
+            <th class="summary-header th-vertical col-fig sortable" @click="sortColumn('bf')" title="Brought Forward from Previous Term">
+              <span class="th-content">B/F ⬍</span>
+            </th>
+            <th class="summary-header th-vertical col-fig sortable" @click="sortColumn('grandTotal')" title="Grand Total Score">
+              <span class="th-content">GRAND TOTAL ⬍</span>
+            </th>
+            <th class="summary-header th-vertical col-fig sortable" @click="sortColumn('average')" title="Average Percentage">
+              <span class="th-content">AVERAGE% ⬍</span>
+            </th>
+            <th class="summary-header th-vertical col-pos sortable" @click="sortByPosition()" title="Position / Rank">
+              <span class="th-content">POSITION 🏆</span>
+            </th>
+            <th class="summary-header th-vertical col-remark" title="Pupil Qualitative Remark">
+              <span class="th-content">REMARKS</span>
+            </th>
+          </tr>
+
+          <!-- 2nd Header Row: S/N, NAME OF PUPILS in 2nd column, and 100 in each subject -->
+          <tr class="max-marks-row">
+            <!-- 2nd Row Col 1: S/N -->
+            <th class="col-sn max-sn">S/N</th>
+
+            <!-- 2nd Row Col 2: NAME OF PUPILS -->
+            <th class="col-name max-name sortable" @click="sortColumn('name')" style="text-align: center; font-size: 0.65rem; color: #dc2626; font-weight: 800;">
+              NAME OF PUPILS ⬍
+            </th>
+
+            <th class="col-adm max-adm"></th>
+            <th class="col-status max-status"></th>
+            
+            <!-- 100 marks for each of the 11 subjects -->
+            <th class="col-fig max-mark">100</th>
+            <th class="col-fig max-mark">100</th>
+            <th class="col-fig max-mark">100</th>
+            <th class="col-fig max-mark">100</th>
+            <th class="col-fig max-mark">100</th>
+            <th class="col-fig max-mark">100</th>
+            <th class="col-fig max-mark">100</th>
+            <th class="col-fig max-mark">100</th>
+            <th class="col-fig max-mark">100</th>
+            <th class="col-fig max-mark">100</th>
+            <th class="col-fig max-mark">100</th>
+
+            <!-- Summaries Max Marks -->
+            <th class="col-fig max-mark max-summary">1100</th>
+            <th class="col-fig max-mark max-summary">2200</th>
+            <th class="col-fig max-mark max-summary">3300</th>
+            <th class="col-fig max-mark max-summary">100%</th>
+            <th class="col-pos max-mark max-summary">--</th>
+            <th class="col-remark max-mark max-summary">P/F</th>
+          </tr>
+        </thead>
+        <tbody>
+          <template x-for="(pupil, index) in displayPupils" :key="pupil.id">
+            <tr>
+              <!-- S/N -->
+              <td class="col-sn" x-text="index + 1"></td>
+
+              <!-- Name of Pupils -->
+              <td class="col-name">
+                <input type="text" class="input-text" style="font-weight: 600;" x-model="pupil.name" placeholder="Full Name" />
+              </td>
+
+              <!-- Adm. No -->
+              <td class="col-adm">
+                <input type="text" class="input-text" style="text-align: center;" x-model="pupil.admNo" placeholder="ADM-000" />
+              </td>
+
+              <!-- STATUS: Only FA and SA options -->
+              <td class="col-status">
+                <select class="input-text" x-model="pupil.status" style="font-weight: 700; text-align: center; padding: 0;">
+                  <option value="FA">FA</option>
+                  <option value="SA">SA</option>
+                </select>
+              </td>
+
+              <!-- 11 Subjects Inputs -->
+              <td class="col-fig">
+                <input type="number" min="0" max="100" class="input-num" :class="{'warning': isInvalidScore(pupil.maths)}" x-model.number="pupil.maths" />
+              </td>
+              <td class="col-fig">
+                <input type="number" min="0" max="100" class="input-num" :class="{'warning': isInvalidScore(pupil.english)}" x-model.number="pupil.english" />
+              </td>
+              <td class="col-fig">
+                <input type="number" min="0" max="100" class="input-num" :class="{'warning': isInvalidScore(pupil.quantitative)}" x-model.number="pupil.quantitative" />
+              </td>
+              <td class="col-fig">
+                <input type="number" min="0" max="100" class="input-num" :class="{'warning': isInvalidScore(pupil.vReasoning)}" x-model.number="pupil.vReasoning" />
+              </td>
+              <td class="col-fig">
+                <input type="number" min="0" max="100" class="input-num" :class="{'warning': isInvalidScore(pupil.bst)}" x-model.number="pupil.bst" />
+              </td>
+              <td class="col-fig">
+                <input type="number" min="0" max="100" class="input-num" :class="{'warning': isInvalidScore(pupil.yoruba)}" x-model.number="pupil.yoruba" />
+              </td>
+              <td class="col-fig">
+                <input type="number" min="0" max="100" class="input-num" :class="{'warning': isInvalidScore(pupil.crsIrs)}" x-model.number="pupil.crsIrs" />
+              </td>
+              <td class="col-fig">
+                <input type="number" min="0" max="100" class="input-num" :class="{'warning': isInvalidScore(pupil.ccaDrawing)}" x-model.number="pupil.ccaDrawing" />
+              </td>
+              <td class="col-fig">
+                <input type="number" min="0" max="100" class="input-num" :class="{'warning': isInvalidScore(pupil.historyCivic)}" x-model.number="pupil.historyCivic" />
+              </td>
+              <td class="col-fig">
+                <input type="number" min="0" max="100" class="input-num" :class="{'warning': isInvalidScore(pupil.pvs)}" x-model.number="pupil.pvs" />
+              </td>
+              <td class="col-fig">
+                <input type="number" min="0" max="100" class="input-num" :class="{'warning': isInvalidScore(pupil.nve)}" x-model.number="pupil.nve" />
+              </td>
+
+              <!-- TOTAL (Sum of 11 subjects) -->
+              <td class="computed-val val-total col-fig" x-text="calculateTotal(pupil)"></td>
+
+              <!-- B/F (Brought Forward from past term) -->
+              <td class="col-fig">
+                <input type="number" min="0" class="input-num" style="background:#fafafa;" x-model.number="pupil.bf" placeholder="0" />
+              </td>
+
+              <!-- GRAND TOTAL (TOTAL + B/F) -->
+              <td class="computed-val val-grand col-fig" x-text="calculateGrandTotal(pupil)"></td>
+
+              <!-- AVERAGE% -->
+              <td class="computed-val val-avg col-fig" x-text="calculateAverage(pupil) + '%'"></td>
+
+              <!-- POSITION -->
+              <td class="col-pos">
+                <span class="val-pos" :class="getPositionBadgeClass(pupil)" x-text="getPositionText(pupil)">-</span>
+              </td>
+
+              <!-- REMARKS -->
+              <td class="col-remark">
+                <span class="val-remark" :class="getRemarkBadgeClass(pupil)" x-text="getRemark(pupil)"></span>
+              </td>
+
+              <!-- ACTION -->
+              <td class="col-actions">
+                <button class="del-btn" title="Remove student" @click="removePupil(pupil.id)">✖</button>
+              </td>
+            </tr>
+          </template>
+
+          <!-- Empty State -->
+          <tr x-show="displayPupils.length === 0">
+            <td colspan="21" style="text-align: center; padding: 2.5rem; color: var(--text-muted);">
+              No pupils found. Click <strong>"Bulk Upload Scores"</strong>, <strong>"Add Pupil"</strong> or <strong>"Reset Sample Data"</strong> to populate the broadsheet.
+            </td>
+          </tr>
+        </tbody>
+
+        <!-- Table Aggregate Footer -->
+        <tfoot x-show="displayPupils.length > 0" style="background: #f8fafc; font-weight: 700; border-top: 2px solid #334155;">
+          <tr>
+            <td colspan="4" style="text-align: right; padding-right: 1rem;">SUBJECT MEANS:</td>
+            <td class="computed-val col-fig" x-text="subjectMean('maths')"></td>
+            <td class="computed-val col-fig" x-text="subjectMean('english')"></td>
+            <td class="computed-val col-fig" x-text="subjectMean('quantitative')"></td>
+            <td class="computed-val col-fig" x-text="subjectMean('vReasoning')"></td>
+            <td class="computed-val col-fig" x-text="subjectMean('bst')"></td>
+            <td class="computed-val col-fig" x-text="subjectMean('yoruba')"></td>
+            <td class="computed-val col-fig" x-text="subjectMean('crsIrs')"></td>
+            <td class="computed-val col-fig" x-text="subjectMean('ccaDrawing')"></td>
+            <td class="computed-val col-fig" x-text="subjectMean('historyCivic')"></td>
+            <td class="computed-val col-fig" x-text="subjectMean('pvs')"></td>
+            <td class="computed-val col-fig" x-text="subjectMean('nve')"></td>
+            <td colspan="5" style="text-align: center; color: var(--text-muted); font-size: 0.75rem;">11 Subjects Total (Max 1100 pts)</td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+
+    <!-- Supplementary Details / Grading Legend (Reference Only - Excluded from Print) -->
+    <section class="footer-info no-print">
+      <div class="info-block">
+        <h3>Lagos State Primary/Basic Grading Benchmarks</h3>
+        <ul class="grading-scale">
+          <li><span>75% – 100%</span> <strong>Distinction / Excellent (A)</strong></li>
+          <li><span>65% – 74%</span> <strong>Very Good / Credit (B)</strong></li>
+          <li><span>50% – 64%</span> <strong>Good / Pass (C)</strong></li>
+          <li><span>40% – 49%</span> <strong>Fair / Remedial Required (D)</strong></li>
+          <li><span>0% – 39%</span> <strong style="color: var(--danger);">Poor / Needs Improvement (E/F)</strong></li>
+        </ul>
+      </div>
+
+      <div class="info-block">
+        <h3>Subject Acronyms Reference</h3>
+        <ul class="grading-scale">
+          <li><span>BST</span> <strong>Basic Science & Technology</strong></li>
+          <li><span>CRS / IRS</span> <strong>Christian / Islamic Religious Studies</strong></li>
+          <li><span>CCA</span> <strong>Cultural & Creative Arts</strong></li>
+          <li><span>PVS</span> <strong>Pre-Vocational Studies / Physical Dev.</strong></li>
+          <li><span>NVE</span> <strong>National Values Education / Social Habit</strong></li>
+        </ul>
+      </div>
+
+      <div class="info-block">
+        <h3>Calculation & Position Sorting Notes</h3>
+        <p style="font-size: 0.8rem; color: var(--text-muted); line-height: 1.6;">
+          • <strong>TOTAL:</strong> Computed as sum of all 11 subject continuous assessment + exam scores (Max: 1100 marks).<br>
+          • <strong>B/F:</strong> Brought forward marks from prior terms.<br>
+          • <strong>GRAND TOTAL:</strong> Current Term Total + B/F.<br>
+          • <strong>AVERAGE%:</strong> Current Term Total ÷ 11 subjects (rounded to 1 decimal place).<br>
+          • <strong>SORT TO FIND POSITION:</strong> Click <em>"Sort by Position"</em> or any column header to rearrange pupils with standard competition ranking (ties share rank).<br>
+          • <strong>BULK UPLOAD:</strong> Upload or paste CSV/Excel records directly with full auto-computation.
+        </p>
+      </div>
+    </section>
+  </div>
+</main>
+</div>
+
+  <script src="app.js"></script>
+
+</body>
+</html>

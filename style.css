@@ -1,0 +1,1774 @@
+/**
+ * Lagos State Pupil Score Sheet & Broadsheet Calculator Stylesheet
+ * Optimized for Screen & A4 Portrait Print
+ */
+
+:root {
+  --primary: #0f766e;
+  --primary-dark: #115e59;
+  --primary-light: #ccfbf1;
+  --secondary: #0284c7;
+  --accent: #d97706;
+  --danger: #ef4444;
+  --success: #10b981;
+  --bg: #f8fafc;
+  --card-bg: #ffffff;
+  --text: #0f172a;
+  --text-muted: #64748b;
+  --border: #e2e8f0;
+  --border-dark: #cbd5e1;
+  --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.07), 0 2px 4px -2px rgb(0 0 0 / 0.07);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.08), 0 4px 6px -4px rgb(0 0 0 / 0.08);
+  --radius: 10px;
+}
+
+html {
+  font-size: 75%;
+  /* Reduced all typography by 1/4 (75% scale) */
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  background: #f1f5f9;
+  color: var(--text);
+  line-height: 1.4;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* Modern App Layout with Sidebar */
+.app-layout {
+  display: flex;
+  min-height: 100vh;
+  width: 100%;
+}
+
+/* LEFT SIDEBAR: MENU & OPERATIONS */
+.app-sidebar {
+  width: 320px;
+  flex-shrink: 0;
+  background: #0f172a;
+  color: #f8fafc;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  position: sticky;
+  top: 0;
+  border-right: 1px solid #334155;
+  box-shadow: 4px 0 16px rgba(0, 0, 0, 0.15);
+  z-index: 100;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+body.sidebar-collapsed .app-sidebar {
+  margin-left: -320px;
+}
+
+.sidebar-header {
+  padding: 1.25rem 1.25rem 1rem 1.25rem;
+  border-bottom: 1px solid #1e293b;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #090d16;
+}
+
+.sidebar-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.brand-icon {
+  font-size: 1.75rem;
+}
+
+.brand-title {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: #ffffff;
+  line-height: 1.2;
+}
+
+.brand-sub {
+  font-size: 0.7rem;
+  color: #94a3b8;
+}
+
+.sidebar-toggle-btn {
+  background: #1e293b;
+  border: 1px solid #334155;
+  color: #cbd5e1;
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  transition: all 0.15s;
+}
+
+.sidebar-toggle-btn:hover {
+  background: #334155;
+  color: #ffffff;
+}
+
+.sidebar-content {
+  padding: 1.25rem;
+  overflow-y: auto;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.sidebar-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.sidebar-section-title {
+  font-size: 0.72rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #94a3b8;
+  display: block;
+  margin-bottom: 0.2rem;
+}
+
+.sidebar-search input {
+  width: 100%;
+  background: #1e293b;
+  border: 1px solid #334155;
+  color: #ffffff;
+  padding: 0.55rem 0.75rem;
+  border-radius: 8px;
+  font-size: 0.82rem;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.sidebar-search input:focus {
+  border-color: #38bdf8;
+}
+
+.sidebar-actions-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+}
+
+.side-btn {
+  padding: 0.6rem 0.75rem;
+  border-radius: 8px;
+  border: none;
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  transition: all 0.15s ease;
+  text-align: center;
+}
+
+.side-btn.btn-print {
+  background: #dc2626;
+  color: #ffffff;
+  grid-column: span 2;
+  font-size: 0.88rem;
+  padding: 0.7rem;
+  box-shadow: 0 4px 10px rgba(220, 38, 38, 0.35);
+}
+
+.side-btn.btn-print:hover {
+  background: #b91c1c;
+  transform: translateY(-1px);
+}
+
+.side-btn.btn-upload {
+  background: #0284c7;
+  color: #ffffff;
+}
+
+.side-btn.btn-upload:hover {
+  background: #0369a1;
+}
+
+.side-btn.btn-sort {
+  background: #d97706;
+  color: #ffffff;
+}
+
+.side-btn.btn-sort:hover {
+  background: #b45309;
+}
+
+.side-btn.btn-primary {
+  background: #10b981;
+  color: #ffffff;
+}
+
+.side-btn.btn-primary:hover {
+  background: #059669;
+}
+
+.side-btn.btn-toggle {
+  width: 100%;
+  background: #1e293b;
+  border: 1px solid #334155;
+  color: #e2e8f0;
+  padding: 0.55rem;
+}
+
+.side-btn.btn-toggle:hover {
+  background: #334155;
+}
+
+.sidebar-field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.sidebar-field-group label {
+  font-size: 0.72rem;
+  color: #cbd5e1;
+  font-weight: 600;
+}
+
+.side-select {
+  width: 100%;
+  background: #1e293b;
+  border: 1px solid #334155;
+  color: #ffffff;
+  padding: 0.5rem 0.6rem;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  outline: none;
+}
+
+.sidebar-data-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.side-btn.btn-outline {
+  width: 100%;
+  background: #1e293b;
+  border: 1px solid #334155;
+  color: #cbd5e1;
+  justify-content: flex-start;
+  padding: 0.5rem 0.75rem;
+}
+
+.side-btn.btn-outline:hover {
+  background: #334155;
+  color: #ffffff;
+}
+
+.side-btn.btn-danger {
+  width: 100%;
+  background: rgba(239, 68, 68, 0.15);
+  border: 1px solid #ef4444;
+  color: #fca5a5;
+  justify-content: flex-start;
+  padding: 0.5rem 0.75rem;
+}
+
+.side-btn.btn-danger:hover {
+  background: #ef4444;
+  color: #ffffff;
+}
+
+/* Sidebar Metrics List */
+.sidebar-metrics-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  background: #090d16;
+  border: 1px solid #1e293b;
+  border-radius: 8px;
+  padding: 0.75rem 0.9rem;
+}
+
+.metric-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.78rem;
+  padding: 0.25rem 0;
+  border-bottom: 1px dashed #1e293b;
+}
+
+.metric-item:last-child {
+  border-bottom: none;
+}
+
+.metric-name {
+  color: #94a3b8;
+}
+
+.metric-val {
+  font-weight: 800;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.text-primary {
+  color: #38bdf8;
+}
+
+.text-success {
+  color: #34d399;
+}
+
+.text-warning {
+  color: #fbbf24;
+}
+
+.text-accent {
+  color: #f472b6;
+}
+
+/* Floating toggle when sidebar is collapsed */
+.floating-sidebar-btn {
+  position: fixed;
+  left: 14px;
+  top: 14px;
+  z-index: 99;
+  background: #0f172a;
+  color: #ffffff;
+  border: 1px solid #334155;
+  border-radius: 8px;
+  padding: 0.5rem 0.9rem;
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.floating-sidebar-btn:hover {
+  background: #1e293b;
+}
+
+/* RIGHT MAIN CONTENT: THE PURE SHEET */
+.main-sheet-workspace {
+  flex: 1;
+  padding: 1.25rem 1.5rem;
+  overflow-x: auto;
+  background: #f8fafc;
+  min-width: 0;
+}
+
+.container.printable-document {
+  max-width: 100%;
+  margin: 0 auto;
+  background: #ffffff;
+  padding: 1.25rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+}
+
+/* Header Banner */
+/* Lagos State UBEC Official Master Header - Exact Match to Reference Photo */
+.official-master-header {
+  background: #ffffff;
+  margin-bottom: 1rem;
+  display: flex;
+  width: 100%;
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* Full Width Master Banner: Big Red Rounded Box */
+.header-right-main-box {
+  width: 100%;
+  flex: 1;
+  border: 3.5px solid #dc2626;
+  border-radius: 24px;
+  padding: 0.9rem 1.4rem 0.8rem 1.4rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  background: #ffffff;
+  box-shadow: 0 2px 10px rgba(220, 38, 38, 0.06);
+}
+
+/* TOP SECTION: Titles at Top and Logo to the Right */
+.header-top-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  border-bottom: 2px solid #fee2e2;
+  padding-bottom: 0.65rem;
+}
+
+.header-board-titles {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 0.35rem;
+}
+
+/* BOTTOM SECTION: Institutional Form Lines */
+.header-box-bottom-lines {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.inline-meta-row {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.inline-meta-row.row-term-only {
+  justify-content: flex-start;
+}
+
+.inline-meta-row.row-lgea-session {
+  justify-content: space-between;
+  gap: 2.5rem;
+}
+
+.inline-meta-row.row-school-class {
+  justify-content: space-between;
+  gap: 2.5rem;
+}
+
+.form-item {
+  display: flex;
+  align-items: baseline;
+  gap: 0.45rem;
+  min-width: 0;
+}
+
+.form-item.term-left {
+  width: 200px;
+  justify-content: flex-start;
+}
+
+.form-item.lgea-item {
+  flex: 0 0 240px;
+  max-width: 240px;
+}
+
+.form-item.session-right {
+  flex: 0 0 240px;
+  max-width: 240px;
+  justify-content: flex-end;
+}
+
+.form-item.school-name-item {
+  flex: 2.5;
+}
+
+.form-item.class-item {
+  flex: 1;
+}
+
+.form-label {
+  color: #dc2626;
+  font-size: 0.85rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.line-input {
+  flex: 1;
+  border: none;
+  border-bottom: 2px solid #dc2626;
+  background: transparent;
+  outline: none;
+  color: #0f172a;
+  font-size: 0.88rem;
+  font-weight: 700;
+  padding: 1px 4px;
+  text-transform: uppercase;
+  min-width: 50px;
+}
+
+.line-input:focus {
+  background: #fef2f2;
+  border-bottom-color: #991b1b;
+}
+
+/* Lagos State Crest - Circular frame (+50% size) */
+.header-crest-wrapper {
+  flex-shrink: 0;
+  width: 126px;
+  height: 126px;
+  border: 3.5px solid #dc2626;
+  border-radius: 50%;
+  background: #ffffff;
+  padding: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 3px 10px rgba(220, 38, 38, 0.14);
+  overflow: hidden;
+}
+
+.official-crest-img,
+.official-crest-svg {
+  max-width: 100%;
+  max-height: 100%;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+/* Middle Section: Big Title & Pill Box */
+.header-box-center-titles {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 0.4rem;
+  margin: 0.2rem 0;
+}
+
+.board-title-heading {
+  color: #dc2626;
+  font-size: clamp(1.8rem, 3.05vw, 3.25rem);
+  font-weight: 900;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  margin: 0;
+  line-height: 1.15;
+  text-align: center;
+  white-space: nowrap;
+}
+
+/* Pill Box: UNIFIED EXAMINATION MASTER SHEET - Solid Reverse Red with White Text in Rectangle Border with Short Edges (Reduced by 30%) */
+.master-sheet-pill-box {
+  border: 3.5px solid #dc2626;
+  border-radius: 3px;
+  padding: 0.28rem 0.4rem;
+  background: #ffffff;
+  display: inline-block;
+  margin: 0.2rem 0;
+}
+
+.master-sheet-pill-inner {
+  background: #dc2626;
+  border-radius: 2px;
+  padding: 0.45rem 3.2rem;
+  display: inline-block;
+}
+
+.master-sheet-title {
+  color: #ffffff;
+  font-size: 2.03rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  display: block;
+  text-align: center;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+/* Bottom Row: CLASS & SESSION */
+.header-box-bottom-row {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 3rem;
+  width: 100%;
+}
+
+.form-item.class-item {
+  flex: 1.2;
+}
+
+.form-item.session-item {
+  flex: 1;
+}
+
+@media (max-width: 900px) {
+  .official-master-header {
+    flex-direction: column;
+  }
+
+  .header-left-code-col {
+    width: 100%;
+  }
+
+  .board-title-heading {
+    font-size: 1.1rem;
+  }
+
+  .master-sheet-title {
+    font-size: 0.85rem;
+  }
+}
+
+/* Stats Overview Bar */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.stat-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1rem 1.25rem;
+  box-shadow: var(--shadow);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+.stat-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.stat-value {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: var(--text);
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* Actions Bar */
+.controls-bar {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 0.85rem 1.25rem;
+  margin-bottom: 1rem;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+  box-shadow: var(--shadow);
+}
+
+.search-box {
+  display: flex;
+  align-items: center;
+  background: var(--bg);
+  border: 1px solid var(--border-dark);
+  border-radius: 6px;
+  padding: 0.35rem 0.75rem;
+  gap: 0.5rem;
+  min-width: 250px;
+}
+
+.search-box input {
+  border: none;
+  background: transparent;
+  outline: none;
+  font-size: 0.875rem;
+  width: 100%;
+  color: var(--text);
+}
+
+.btn-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.45rem 0.85rem;
+  border-radius: 6px;
+  font-size: 0.825rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.btn-primary {
+  background: var(--primary);
+  color: white;
+}
+
+.btn-primary:hover {
+  background: var(--primary-dark);
+}
+
+.btn-secondary {
+  background: #f1f5f9;
+  color: #334155;
+  border-color: var(--border-dark);
+}
+
+.btn-secondary:hover {
+  background: #e2e8f0;
+  color: #0f172a;
+}
+
+.btn-accent {
+  background: #fef3c7;
+  color: #b45309;
+  border-color: #fde68a;
+}
+
+.btn-accent:hover {
+  background: #fde68a;
+}
+
+.btn-upload {
+  background: #e0e7ff;
+  color: #4338ca;
+  border-color: #c7d2fe;
+}
+
+.btn-upload:hover {
+  background: #c7d2fe;
+  color: #3730a3;
+}
+
+.btn-sort {
+  background: #f3e8ff;
+  color: #7e22ce;
+  border-color: #e9d5ff;
+}
+
+.btn-sort:hover {
+  background: #e9d5ff;
+}
+
+.btn-danger {
+  background: #fee2e2;
+  color: #b91c1c;
+  border-color: #fca5a5;
+}
+
+.btn-danger:hover {
+  background: #fecaca;
+}
+
+/* Ranking Criteria Selector */
+.ranking-selector {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: #f8fafc;
+  border: 1px solid var(--border-dark);
+  padding: 0.3rem 0.6rem;
+  border-radius: 6px;
+  font-size: 0.8rem;
+}
+
+.ranking-selector select {
+  border: none;
+  background: transparent;
+  font-weight: 700;
+  color: #0f766e;
+  outline: none;
+  cursor: pointer;
+}
+
+/* Modal Styles for Bulk Upload */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(15, 23, 42, 0.65);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 1rem;
+}
+
+.modal-card {
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  width: 100%;
+  max-width: 760px;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: modalIn 0.2s ease-out;
+}
+
+@keyframes modalIn {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.modal-header {
+  padding: 1.25rem 1.5rem;
+  background: #0f172a;
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modal-header h2 {
+  font-size: 1.15rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.modal-close {
+  background: transparent;
+  border: none;
+  color: #94a3b8;
+  font-size: 1.4rem;
+  cursor: pointer;
+}
+
+.modal-close:hover {
+  color: white;
+}
+
+.modal-body {
+  padding: 1.5rem;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.dropzone {
+  border: 2px dashed #94a3b8;
+  border-radius: 8px;
+  padding: 1.5rem;
+  text-align: center;
+  cursor: pointer;
+  background: #f8fafc;
+  transition: all 0.2s;
+}
+
+.dropzone:hover,
+.dropzone.dragover {
+  border-color: var(--primary);
+  background: #f0fdfa;
+}
+
+.modal-tabs {
+  display: flex;
+  gap: 0.5rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.modal-tab {
+  padding: 0.5rem 1rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  color: var(--text-muted);
+  border-bottom: 2px solid transparent;
+}
+
+.modal-tab.active {
+  color: var(--primary);
+  border-bottom-color: var(--primary);
+}
+
+.paste-area {
+  width: 100%;
+  height: 180px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.8rem;
+  padding: 0.75rem;
+  border: 1px solid var(--border-dark);
+  border-radius: 6px;
+  resize: vertical;
+  outline: none;
+}
+
+.paste-area:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px rgba(15, 118, 110, 0.2);
+}
+
+.modal-footer {
+  padding: 1rem 1.5rem;
+  background: #f8fafc;
+  border-top: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Score Table Container */
+.table-responsive {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-lg);
+  overflow-x: auto;
+  margin-bottom: 1.5rem;
+  position: relative;
+}
+
+table.score-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 0.8rem;
+  text-align: left;
+}
+
+/* Sticky Headers & Columns */
+/* Sticky Headers & Columns with Official Lagos State Red Accent */
+th {
+  background: #ffffff;
+  color: #dc2626;
+  font-weight: 800;
+  text-transform: uppercase;
+  font-size: 0.65rem;
+  letter-spacing: 0.03em;
+  padding: 0.4rem 0.15rem;
+  border-right: 1px solid #f87171;
+  border-bottom: 2px solid #dc2626;
+  border-top: 1px solid #f87171;
+  white-space: nowrap;
+  user-select: none;
+  text-align: center;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  vertical-align: middle;
+}
+
+th.sortable {
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+th.sortable:hover {
+  background: #fef2f2;
+  color: #991b1b;
+}
+
+th.subject-header {
+  background: #fffafa;
+  color: #dc2626;
+  font-weight: 800;
+}
+
+th.summary-header {
+  background: #fef2f2;
+  color: #b91c1c;
+  font-weight: 900;
+}
+
+/* 1st Header Row: School's Code No in 2nd Column */
+th.school-code-col-th {
+  background: #ffffff;
+  vertical-align: middle;
+  padding: 0.2rem 0.25rem;
+}
+
+.code-th-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  gap: 0.2rem;
+}
+
+.code-th-title {
+  font-size: 0.62rem;
+  font-weight: 800;
+  color: #dc2626;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.code-th-input {
+  width: 90%;
+  max-width: 95px;
+  border: none;
+  border-bottom: 1.5px solid #dc2626;
+  background: transparent;
+  outline: none;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: #0f172a;
+  text-align: center;
+  padding: 1px 0;
+}
+
+.code-th-input:focus {
+  background: #fef2f2;
+  border-bottom-color: #991b1b;
+}
+
+/* 2nd Header Row: S/N, NAME OF PUPILS, and Subject Max Marks (100) Row */
+tr.max-marks-row th {
+  background: #fff5f5;
+  color: #dc2626;
+  font-weight: 800;
+  font-size: 0.68rem;
+  font-family: 'JetBrains Mono', monospace;
+  padding: 0.2rem 0.05rem;
+  border-top: 1.5px solid #dc2626;
+  border-bottom: 2px solid #dc2626;
+  border-right: 1px solid #f87171;
+  height: 24px;
+  line-height: 1;
+}
+
+tr.max-marks-row th.max-mark {
+  color: #dc2626;
+  font-weight: 800;
+}
+
+tr.max-marks-row th.max-name {
+  font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+  letter-spacing: 0.04em;
+}
+
+tr.max-marks-row th.max-summary {
+  background: #fee2e2;
+  color: #991b1b;
+  font-weight: 900;
+}
+
+/* Vertical Rotated Headers for Subjects & Summaries (Keeps S/N and Name horizontal) */
+.vertical-mode th.th-vertical {
+  height: 125px;
+  padding: 0.35rem 0.1rem;
+  vertical-align: middle;
+  text-align: center;
+  position: relative;
+}
+
+.vertical-mode .th-content {
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  white-space: nowrap;
+  text-align: center;
+  margin: 0 auto;
+  display: inline-block;
+  letter-spacing: 0.04em;
+  line-height: 1.05;
+  max-height: 118px;
+}
+
+.vertical-mode th.th-horizontal {
+  vertical-align: middle;
+  text-align: center;
+  height: auto;
+}
+
+td {
+  padding: 0.15rem 0.1rem;
+  border-bottom: 1px solid #fecaca;
+  border-right: 1px solid #fecaca;
+  white-space: nowrap;
+  text-align: center;
+  background: #ffffff;
+}
+
+/* Appropriately interspaced column widths calibrated for A4 Portrait */
+.col-sn {
+  width: 16px;
+  min-width: 14px;
+  max-width: 20px;
+  font-weight: 700;
+  color: var(--text-muted);
+  padding: 0.15rem 0.05rem;
+}
+
+/* Name column interspaced appropriately to fit A4 Portrait while remaining legible */
+.col-name {
+  text-align: left;
+  width: 86px;
+  min-width: 72px;
+  max-width: 108px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  padding: 0.15rem 0.2rem;
+}
+
+.col-adm {
+  width: 40px;
+  min-width: 32px;
+  max-width: 48px;
+  padding: 0.15rem 0.05rem;
+}
+
+.col-status {
+  width: 22px;
+  min-width: 18px;
+  max-width: 26px;
+  padding: 0.15rem 0.05rem;
+}
+
+/* Calibrated figure column width (~24px - 28px) to fit 11 subjects + summaries in 200mm */
+td.col-fig,
+th.col-fig {
+  width: 22px;
+  min-width: 20px;
+  max-width: 27px;
+  padding: 0.15rem 0.05rem;
+}
+
+.col-actions {
+  width: 22px;
+  min-width: 18px;
+  max-width: 26px;
+  padding: 0.15rem 0.05rem;
+}
+
+/* POSITION column reduced by 50% (from ~36px to ~18px) */
+.col-pos {
+  width: 18px;
+  min-width: 16px;
+  max-width: 22px;
+  padding: 0.15rem 0.02rem;
+  text-align: center;
+}
+
+/* REMARKS column increased by 10% */
+.col-remark {
+  width: 24px;
+  min-width: 20px;
+  max-width: 29px;
+  padding: 0.15rem 0.02rem;
+  text-align: center;
+}
+
+tr:nth-child(even) td {
+  background: #fcfdfe;
+}
+
+tr:hover td {
+  background: #f0fdf4 !important;
+}
+
+/* Inputs in Table */
+.input-text {
+  width: 100%;
+  border: 1px solid transparent;
+  padding: 0.1rem 0.15rem;
+  border-radius: 3px;
+  font-size: 0.68rem;
+  color: var(--text);
+  background: transparent;
+  outline: none;
+  transition: all 0.12s ease;
+  text-overflow: ellipsis;
+}
+
+.input-text:focus {
+  border-color: var(--primary);
+  background: #ffffff;
+  box-shadow: 0 0 0 1px rgba(15, 118, 110, 0.25);
+}
+
+/* Compact figure input tuned for A4 portrait */
+.input-num {
+  width: 22px;
+  text-align: center;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 0.1rem 0;
+  border: 1px solid #e2e8f0;
+  border-radius: 2px;
+  background: #ffffff;
+  outline: none;
+  -moz-appearance: textfield;
+}
+
+.input-num::-webkit-outer-spin-button,
+.input-num::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.input-num:focus {
+  border-color: var(--secondary);
+  box-shadow: 0 0 0 1px rgba(2, 132, 199, 0.3);
+}
+
+.input-num.warning {
+  background-color: #fef2f2;
+  border-color: #ef4444;
+  color: #b91c1c;
+}
+
+/* Computed Summary cells */
+.computed-val {
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 700;
+  padding: 0.15rem 0.05rem;
+  font-size: 0.7rem;
+}
+
+.val-total {
+  color: #0f766e;
+  background: #f0fdfa;
+  font-weight: 800;
+}
+
+.val-grand {
+  color: #1e1b4b;
+  background: #eef2ff;
+  font-weight: 800;
+  font-size: 0.8rem;
+}
+
+.val-avg {
+  color: #0369a1;
+  font-weight: 800;
+}
+
+.val-pos {
+  display: inline-block;
+  font-size: 0.68rem;
+  font-weight: 800;
+  border-radius: 3px;
+  padding: 0.1rem 0.15rem;
+  min-width: 14px;
+  line-height: 1;
+}
+
+.pos-1 {
+  background: #fef08a;
+  color: #854d0e;
+  border: 1px solid #fde047;
+}
+
+.pos-2 {
+  background: #e2e8f0;
+  color: #334155;
+  border: 1px solid #cbd5e1;
+}
+
+.pos-3 {
+  background: #ffedd5;
+  color: #9a3412;
+  border: 1px solid #fed7aa;
+}
+
+.pos-other {
+  background: #f1f5f9;
+  color: #475569;
+}
+
+.val-remark {
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 0.1rem 0.2rem;
+  border-radius: 3px;
+  white-space: nowrap;
+  line-height: 1;
+}
+
+.remark-distinction {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.remark-credit {
+  background: #ecfdf5;
+  color: #047857;
+}
+
+.remark-pass {
+  background: #fef9c3;
+  color: #854d0e;
+}
+
+.remark-fail {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.del-btn {
+  background: none;
+  border: none;
+  color: #94a3b8;
+  cursor: pointer;
+  font-size: 1.1rem;
+  padding: 2px 6px;
+  border-radius: 4px;
+  transition: all 0.15s;
+}
+
+.del-btn:hover {
+  color: #ef4444;
+  background: #fee2e2;
+}
+
+/* Footer / Legend Card */
+.footer-info {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem;
+  margin-bottom: 2rem;
+  box-shadow: var(--shadow);
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+
+.info-block h3 {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #334155;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 0.5rem;
+  border-bottom: 2px solid #0f766e;
+  display: inline-block;
+  padding-bottom: 2px;
+}
+
+.grading-scale {
+  list-style: none;
+  font-size: 0.8rem;
+}
+
+.grading-scale li {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.2rem 0;
+  border-bottom: 1px dashed var(--border);
+}
+
+/* Print styles optimized strictly for A4 Sheet (Portrait) with 0.2" top, left, right margins */
+@page {
+  size: A4 portrait;
+  margin-top: 0.2in;
+  margin-left: 0.2in;
+  margin-right: 0.2in;
+  margin-bottom: 4mm;
+}
+
+@media print {
+
+  html,
+  body {
+    overflow: hidden !important;
+    overflow-x: hidden !important;
+    scrollbar-width: none !important;
+    -ms-overflow-style: none !important;
+  }
+
+  html::-webkit-scrollbar,
+  body::-webkit-scrollbar {
+    display: none !important;
+  }
+
+  html {
+    font-size: 55% !important;
+    /* Scaled down slightly to fit all 20+ columns in 210mm portrait */
+  }
+
+  body {
+    padding: 0 !important;
+    margin: 0 !important;
+    background: white !important;
+    color: black !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  .container {
+    max-width: 100% !important;
+    width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  .app-layout {
+    display: block !important;
+  }
+
+  .app-sidebar,
+  .floating-sidebar-btn,
+  .no-print,
+  .controls-bar,
+  .stats-grid,
+  .del-btn,
+  .col-actions,
+  button,
+  .modal-overlay {
+    display: none !important;
+  }
+
+  .main-sheet-workspace {
+    padding: 0 !important;
+    margin: 0 !important;
+    background: transparent !important;
+    width: 100% !important;
+  }
+
+  .container.printable-document {
+    padding: 0 !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+    width: 100% !important;
+  }
+
+  .official-master-header {
+    margin-bottom: 0.35rem !important;
+    width: 100% !important;
+  }
+
+  .header-right-main-box {
+    width: 100% !important;
+    border: 2px solid #dc2626 !important;
+    border-radius: 12px !important;
+    padding: 0.3rem 0.5rem 0.25rem 0.5rem !important;
+    gap: 0.3rem !important;
+    box-shadow: none !important;
+  }
+
+  .header-top-title-row {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 0.6rem !important;
+    border-bottom: 1px solid #fee2e2 !important;
+    padding-bottom: 0.25rem !important;
+  }
+
+  .header-board-titles {
+    flex: 1 !important;
+    text-align: center !important;
+    gap: 0.15rem !important;
+  }
+
+  .header-crest-wrapper {
+    width: 78px !important;
+    height: 78px !important;
+    border: 2.5px solid #dc2626 !important;
+    border-radius: 50% !important;
+    padding: 3px !important;
+    background: #ffffff !important;
+    flex-shrink: 0 !important;
+    overflow: hidden !important;
+  }
+
+  .official-crest-img {
+    max-width: 100% !important;
+    max-height: 100% !important;
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: contain !important;
+  }
+
+  .board-title-heading {
+    font-size: 15.2pt !important;
+    color: #dc2626 !important;
+    letter-spacing: 0.02em !important;
+    line-height: 1.15 !important;
+    text-align: center !important;
+    font-weight: 900 !important;
+    margin: 0 !important;
+    white-space: nowrap !important;
+  }
+
+  .master-sheet-pill-box {
+    border: 2pt solid #dc2626 !important;
+    border-radius: 3px !important;
+    padding: 2pt 3pt !important;
+    background: #ffffff !important;
+    display: inline-block !important;
+    margin: 2pt 0 !important;
+  }
+
+  .master-sheet-pill-inner {
+    background: #dc2626 !important;
+    border-radius: 2px !important;
+    padding: 3.5pt 26pt !important;
+    display: inline-block !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  .master-sheet-title {
+    font-size: 12.2pt !important;
+    color: #ffffff !important;
+    letter-spacing: 0.08em !important;
+    font-weight: 900 !important;
+    display: block !important;
+    text-align: center !important;
+    line-height: 1.1 !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  .header-box-bottom-lines {
+    gap: 0.12rem !important;
+  }
+
+  .inline-meta-row {
+    gap: 0.8rem !important;
+  }
+
+  .inline-meta-row.row-lgea-session {
+    gap: 1.5rem !important;
+  }
+
+  .inline-meta-row.row-school-class {
+    gap: 1.5rem !important;
+  }
+
+  .form-item.term-left {
+    width: 140px !important;
+  }
+
+  .form-item.lgea-item {
+    flex: 0 0 160px !important;
+    max-width: 160px !important;
+  }
+
+  .form-item.session-right {
+    flex: 0 0 160px !important;
+    max-width: 160px !important;
+  }
+
+  .form-label {
+    font-size: 10pt !important;
+    color: #dc2626 !important;
+    font-weight: 800 !important;
+  }
+
+  .line-input {
+    font-size: 10pt !important;
+    border-bottom: 1.5px solid #dc2626 !important;
+    color: #000000 !important;
+    font-weight: 700 !important;
+  }
+
+  .table-responsive {
+    box-shadow: none !important;
+    border: 1px solid #000 !important;
+    overflow: hidden !important;
+    overflow-x: hidden !important;
+    scrollbar-width: none !important;
+    -ms-overflow-style: none !important;
+    margin-bottom: 0.35rem !important;
+  }
+
+  *::-webkit-scrollbar {
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
+  }
+
+  table.score-table {
+    width: 100% !important;
+    table-layout: fixed !important;
+    font-size: 5.5pt !important;
+  }
+
+  th {
+    background: #ffffff !important;
+    color: #dc2626 !important;
+    border: 1px solid #f87171 !important;
+    font-size: 5.5pt !important;
+    padding: 0.15rem 0.05rem !important;
+  }
+
+  th.subject-header {
+    background: #fffafa !important;
+    color: #dc2626 !important;
+    font-size: 5.5pt !important;
+  }
+
+  th.summary-header {
+    background: #fef2f2 !important;
+    color: #991b1b !important;
+    font-size: 5.5pt !important;
+  }
+
+  tr.max-marks-row th {
+    background: #fff5f5 !important;
+    color: #dc2626 !important;
+    font-size: 5.5pt !important;
+    height: 18px !important;
+    padding: 0.05rem !important;
+    border-top: 1.5px solid #dc2626 !important;
+    border-bottom: 2px solid #dc2626 !important;
+    border-right: 1px solid #f87171 !important;
+  }
+
+  .code-th-title {
+    font-size: 5.5pt !important;
+    color: #dc2626 !important;
+  }
+
+  .code-th-input {
+    font-size: 5.5pt !important;
+    border-bottom: 1px solid #dc2626 !important;
+    width: 90% !important;
+  }
+
+  td {
+    border: 1px solid #64748b !important;
+    padding: 0.08rem 0.04rem !important;
+    font-size: 5.5pt !important;
+  }
+
+  .col-sn {
+    width: 12px !important;
+    font-size: 5.5pt !important;
+  }
+
+  .col-name {
+    width: 78px !important;
+    font-size: 5.5pt !important;
+  }
+
+  .col-adm {
+    width: 31px !important;
+    font-size: 5.5pt !important;
+  }
+
+  .col-status {
+    width: 18px !important;
+    font-size: 5.5pt !important;
+  }
+
+  td.col-fig,
+  th.col-fig {
+    width: 18px !important;
+    font-size: 5.5pt !important;
+  }
+
+  .col-pos {
+    width: 14px !important;
+    min-width: 12px !important;
+    max-width: 16px !important;
+    padding: 0.08rem 0.01rem !important;
+    font-size: 5.5pt !important;
+  }
+
+  .col-remark {
+    width: 20px !important;
+    min-width: 16px !important;
+    max-width: 22px !important;
+    padding: 0.08rem 0.01rem !important;
+    font-size: 5.5pt !important;
+  }
+
+  .vertical-mode th.th-vertical {
+    height: 105px !important;
+    padding: 0.2rem 0.02rem !important;
+    font-size: 5.5pt !important;
+  }
+
+  .vertical-mode .th-content {
+    max-height: 98px !important;
+    font-size: 5.5pt !important;
+    line-height: 1 !important;
+  }
+
+  .input-num {
+    border: none !important;
+    font-size: 5.5pt !important;
+    line-height: 1 !important;
+    width: 100% !important;
+    background: transparent !important;
+    padding: 0 !important;
+  }
+
+  .computed-val {
+    font-size: 5.5pt !important;
+    line-height: 1 !important;
+  }
+
+  .val-grand {
+    font-size: 5.5pt !important;
+  }
+
+  .input-text {
+    border: none !important;
+    font-size: 5.5pt !important;
+    background: transparent !important;
+    padding: 0 !important;
+  }
+
+  /* Remove select dropdown arrow in print for status column */
+  .col-status select,
+  select.input-text {
+    -webkit-appearance: none !important;
+    -moz-appearance: none !important;
+    appearance: none !important;
+    background: transparent !important;
+    border: none !important;
+    text-align: center !important;
+    text-align-last: center !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    outline: none !important;
+    box-shadow: none !important;
+  }
+
+  .col-status select::-ms-expand,
+  select.input-text::-ms-expand {
+    display: none !important;
+  }
+
+  .footer-info {
+    display: none !important;
+  }
+}
