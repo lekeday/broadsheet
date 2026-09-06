@@ -551,7 +551,7 @@ body.sidebar-collapsed .app-sidebar {
 }
 
 .board-title-heading {
-  font-family: 'Akaya Telivigala', cursive, sans-serif;
+  font-family: 'Akaya Kanadaka', cursive, sans-serif;
   color: #dc2626;
   font-size: clamp(1.8rem, 3.2vw, 3.4rem);
   font-weight: 700;
@@ -1516,7 +1516,7 @@ tr:hover td {
   }
 
   .board-title-heading {
-    font-family: 'Akaya Telivigala', cursive, sans-serif !important;
+    font-family: 'Akaya Kanadaka', cursive, sans-serif !important;
     font-size: 16pt !important;
     color: #dc2626 !important;
     letter-spacing: 0.02em !important;
