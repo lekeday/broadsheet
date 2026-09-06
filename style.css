@@ -551,10 +551,10 @@ body.sidebar-collapsed .app-sidebar {
 }
 
 .board-title-heading {
-  font-family: 'Copperplate Gothic Bold', 'Copperplate Gothic', 'Copperplate', 'Cinzel', serif;
+  font-family: 'Berlin Sans FB', 'Berlin Sans FB Demi', 'Belanosima', sans-serif;
   color: #dc2626;
   font-size: clamp(1.8rem, 3.05vw, 3.25rem);
-  font-weight: 900;
+  font-weight: 700;
   letter-spacing: 0.02em;
   text-transform: uppercase;
   margin: 0;
@@ -1516,13 +1516,13 @@ tr:hover td {
   }
 
   .board-title-heading {
-    font-family: 'Copperplate Gothic Bold', 'Copperplate Gothic', 'Copperplate', 'Cinzel', serif !important;
+    font-family: 'Berlin Sans FB', 'Berlin Sans FB Demi', 'Belanosima', sans-serif !important;
     font-size: 15.2pt !important;
     color: #dc2626 !important;
     letter-spacing: 0.02em !important;
     line-height: 1.15 !important;
     text-align: center !important;
-    font-weight: 900 !important;
+    font-weight: 700 !important;
     margin: 0 !important;
     white-space: nowrap !important;
   }
