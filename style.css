@@ -551,11 +551,11 @@ body.sidebar-collapsed .app-sidebar {
 }
 
 .board-title-heading {
-  font-family: 'Berlin Sans FB', 'Berlin Sans FB Demi', 'Belanosima', sans-serif;
+  font-family: 'Bungee', cursive, sans-serif;
   color: #dc2626;
-  font-size: clamp(1.8rem, 3.05vw, 3.25rem);
-  font-weight: 700;
-  letter-spacing: 0.02em;
+  font-size: clamp(1.5rem, 2.7vw, 2.9rem);
+  font-weight: 400;
+  letter-spacing: 0.01em;
   text-transform: uppercase;
   margin: 0;
   line-height: 1.15;
@@ -1516,13 +1516,13 @@ tr:hover td {
   }
 
   .board-title-heading {
-    font-family: 'Berlin Sans FB', 'Berlin Sans FB Demi', 'Belanosima', sans-serif !important;
-    font-size: 15.2pt !important;
+    font-family: 'Bungee', cursive, sans-serif !important;
+    font-size: 13.8pt !important;
     color: #dc2626 !important;
-    letter-spacing: 0.02em !important;
+    letter-spacing: 0.01em !important;
     line-height: 1.15 !important;
     text-align: center !important;
-    font-weight: 700 !important;
+    font-weight: 400 !important;
     margin: 0 !important;
     white-space: nowrap !important;
   }
